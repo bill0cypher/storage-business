@@ -37,7 +37,7 @@ public class DeviceController {
         log.info("REST request to get devices {} in CSV format", model);
         response.setContentType("text/csv");
         response.addHeader("Content-Disposition", "attachment; filename=devices.csv");
-        deviceService.exportAs(model, response.getWriter(), new CSVFormatter());
+        deviceService.exportAs(model, response.getWriter(), new CSVFormatter<>());
     }
 
     @GetMapping(path = "/by/{model}/json")
@@ -46,6 +46,6 @@ public class DeviceController {
         log.info("REST request to get devices {} in JSON format.", model);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.addHeader("Content-Disposition", "attachment; filename=devices.json");
-        deviceService.exportAs(model, response.getWriter(), new JSONFormatter());
+        deviceService.exportAs(model, response.getWriter(), new JSONFormatter<>());
     }
 }

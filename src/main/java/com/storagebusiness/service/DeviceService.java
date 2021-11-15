@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,13 +24,11 @@ public class DeviceService {
     }
 
     public Flux<List<DeviceDTO>> findByModel(String model) {
-        return webClient.get().uri(String.format("/all/by/%s", model)).exchangeToFlux(clientResponse ->
-                clientResponse.body((inputMessage, context) ->
-                        inputMessage.getBody().transform(dataBufferFlux ->
-                                dataBufferFlux.cast(DeviceDTO.class)))).collectList().flux();
+        return webClient.get().uri(String.format("/devices/all/by/%s", model)).exchangeToFlux(clientResponse ->
+                clientResponse.bodyToMono(DeviceDTO[].class).flatMapMany(Flux::fromArray).collectList().flux());
     }
 
-    public void exportAs(String model, Writer writer, Formatter formatter) {
-        findByModel(model).subscribe(deviceDTOS -> formatter.format(deviceDTOS, writer));
+    public void exportAs(String model, Writer writer, Formatter<DeviceDTO> formatter) {
+        findByModel(model).subscribe(devices -> formatter.formatTo(devices, writer));
     }
 }
