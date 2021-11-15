@@ -8,8 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.servlet.ServletInputStream;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,5 +30,9 @@ public class DeviceService {
 
     public void exportAs(String model, Writer writer, Formatter<DeviceDTO> formatter) {
         findByModel(model).subscribe(devices -> formatter.formatTo(devices, writer));
+    }
+
+    public void importAs(ServletInputStream inputStream, Formatter<DeviceDTO> formatter) {
+        formatter.formatFrom(inputStream, DeviceDTO.class);
     }
 }
